@@ -45,3 +45,39 @@ $(document).ready(function() {
 
 	fetchNews(apiUrl);
 });
+const searchForm = document.querySelector('.search-form');
+
+searchForm.addEventListener('submit', (event) => {
+  event.preventDefault(); // Prevent the form from refreshing the page
+
+  const searchTerm = document.querySelector('.search-input').value;
+  const apiKey = "6cbfde89fe0144408537178970ec411a";
+  const url = `https://newsapi.org/v2/everything?q=${searchTerm}&apiKey=${apiKey}`;
+
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      const newsContainer = document.querySelector('.news-container');
+      let newsHTML = '';
+
+      if (data.articles.length > 0) {
+        data.articles.forEach(article => {
+          const articleHTML = `
+            <div class="news-article">
+              <a href="${article.url}">
+                <h2>${article.title}</h2>
+                <img src="${article.urlToImage}" alt="${article.title}">
+                <p>${article.description}</p>
+              </a>
+            </div>
+          `;
+          newsHTML += articleHTML;
+        });
+      } else {
+        newsHTML = '<p class="not-found">No news articles found</p>';
+      }
+
+      newsContainer.innerHTML = newsHTML;
+    })
+    .catch(error => console.log(error));
+});
