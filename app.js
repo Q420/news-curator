@@ -42,7 +42,45 @@ $(document).ready(function() {
 			}
 		});
 	}
-const searchForm = document.querySelector('.search-form');const searchForm = document.querySelector('.search-form');
+const searchForm = document.querySelector('.search-form');const searchForm = document.querySelector('.search-form');const apiKey = "6cbfde89fe0144408537178970ec411a";
+const searchForm = document.getElementById("search-form");
+const searchInput = document.getElementById("search-input");
+const newsList = document.getElementById("news-list");
+
+searchForm.addEventListener("submit", retrieveNews);
+
+function retrieveNews(event) {
+  event.preventDefault();
+
+  const searchText = searchInput.value;
+  const url = `https://newsapi.org/v2/everything?q=${searchText}&apiKey=${apiKey}`;
+
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      if (data.articles.length > 0) {
+        showNews(data.articles);
+      } else {
+        newsList.innerHTML = "<h3>No news articles found</h3>";
+      }
+    })
+    .catch(error => console.log(error));
+}
+
+function showNews(articles) {
+  let output = "";
+  articles.forEach(article => {
+    output += `
+      <li class="article">
+        <img src="${article.urlToImage}" alt="${article.title}" class="article-img">
+        <h2 class="article-title"><a href="${article.url}" target="_blank">${article.title}</a></h2>
+        <p class="article-description">${article.description}</p>
+      </li>
+    `;
+  });
+  newsList.innerHTML = output;
+}
+
 
 searchForm.addEventListener('submit', (event) => {
   event.preventDefault(); // Prevent the form from refreshing the page
